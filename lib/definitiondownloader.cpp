@@ -158,7 +158,8 @@ DefinitionDownloader::DefinitionDownloader(Repository *repo, QObject *parent)
     d->pendingDownloads = 0;
     d->needsReload = false;
 
-    d->downloadLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/org.kde.syntax-highlighting/syntax");
+    d->downloadLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/")
+            + repo->KDE_DATA + "/syntax";
     QDir().mkpath(d->downloadLocation);
     Q_ASSERT(QFile::exists(d->downloadLocation));
 }

@@ -215,7 +215,7 @@ void RepositoryPrivate::load(Repository *repo)
     // do lookup in installed path when has no syntax resource
 #ifndef HAS_SYNTAX_RESOURCE
     for (const auto &dir : QStandardPaths::locateAll(QStandardPaths::GenericDataLocation,
-                                                     QStringLiteral("org.kde.syntax-highlighting/syntax-bundled"),
+                                                     repo->KDE_DATA + QStringLiteral("/syntax-bundled"),
                                                      QStandardPaths::LocateDirectory)) {
         if (!loadSyntaxFolderFromIndex(repo, dir)) {
             loadSyntaxFolder(repo, dir);
@@ -224,7 +224,7 @@ void RepositoryPrivate::load(Repository *repo)
 #endif
 
     for (const auto &dir : QStandardPaths::locateAll(QStandardPaths::GenericDataLocation,
-                                                     QStringLiteral("org.kde.syntax-highlighting/syntax"),
+                                                     repo->KDE_DATA + QStringLiteral("/syntax"),
                                                      QStandardPaths::LocateDirectory)) {
         loadSyntaxFolder(repo, dir);
     }
@@ -237,10 +237,10 @@ void RepositoryPrivate::load(Repository *repo)
 #endif
 
     // default resources are always used, this is the one location that has a index cbor file
-    loadSyntaxFolderFromIndex(repo, QStringLiteral(":/org.kde.syntax-highlighting/syntax"));
+    loadSyntaxFolderFromIndex(repo, QStringLiteral(":/") + repo->KDE_DATA +"/syntax");
 
     // extra resources provided by 3rdparty libraries/applications
-    loadSyntaxFolder(repo, QStringLiteral(":/org.kde.syntax-highlighting/syntax-addons"));
+    loadSyntaxFolder(repo, QStringLiteral(":/") + repo->KDE_DATA + ".syntax-highlighting/syntax-addons");
 
     // user given extra paths
     for (const auto &path : std::as_const(m_customSearchPaths)) {
@@ -264,17 +264,17 @@ void RepositoryPrivate::load(Repository *repo)
     // do lookup in standard paths, if not disabled
 #ifndef NO_STANDARD_PATHS
     for (const auto &dir : QStandardPaths::locateAll(QStandardPaths::GenericDataLocation,
-                                                     QStringLiteral("org.kde.syntax-highlighting/themes"),
+                                                     repo->KDE_DATA + QStringLiteral("/themes"),
                                                      QStandardPaths::LocateDirectory)) {
         loadThemeFolder(dir);
     }
 #endif
 
     // default resources are always used
-    loadThemeFolder(QStringLiteral(":/org.kde.syntax-highlighting/themes"));
+    loadThemeFolder(QStringLiteral(":/") + repo->KDE_DATA + ".syntax-highlighting/themes");
 
     // extra resources provided by 3rdparty libraries/applications
-    loadThemeFolder(QStringLiteral(":/org.kde.syntax-highlighting/themes-addons"));
+    loadThemeFolder(QStringLiteral(":/") + repo->KDE_DATA + ".syntax-highlighting/themes-addons");
 
     // user given extra paths
     for (const auto &path : std::as_const(m_customSearchPaths)) {
