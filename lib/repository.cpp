@@ -240,7 +240,7 @@ void RepositoryPrivate::load(Repository *repo)
     loadSyntaxFolderFromIndex(repo, QStringLiteral(":/") + repo->KDE_DATA +"/syntax");
 
     // extra resources provided by 3rdparty libraries/applications
-    loadSyntaxFolder(repo, QStringLiteral(":/") + repo->KDE_DATA + ".syntax-highlighting/syntax-addons");
+    loadSyntaxFolder(repo, QStringLiteral(":/") + repo->KDE_DATA + "/syntax-addons");
 
     // user given extra paths
     for (const auto &path : std::as_const(m_customSearchPaths)) {
@@ -271,10 +271,10 @@ void RepositoryPrivate::load(Repository *repo)
 #endif
 
     // default resources are always used
-    loadThemeFolder(QStringLiteral(":/") + repo->KDE_DATA + ".syntax-highlighting/themes");
+    loadThemeFolder(QStringLiteral(":/") + repo->KDE_DATA + "/themes");
 
     // extra resources provided by 3rdparty libraries/applications
-    loadThemeFolder(QStringLiteral(":/") + repo->KDE_DATA + ".syntax-highlighting/themes-addons");
+    loadThemeFolder(QStringLiteral(":/") + repo->KDE_DATA + "/themes-addons");
 
     // user given extra paths
     for (const auto &path : std::as_const(m_customSearchPaths)) {
