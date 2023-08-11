@@ -140,7 +140,6 @@ public:
     Repository();
     ~Repository();
 
-    QString KDE_DATA = "org.kde.syntax-highlighting";
     /**
      * Returns the Definition named @p defName.
      *

@@ -12,6 +12,7 @@
 #include "theme.h"
 #include "themedata_p.h"
 #include "wildcardmatcher.h"
+#include "libpaths.h"
 
 #include <QCborMap>
 #include <QCborValue>
@@ -215,22 +216,22 @@ void RepositoryPrivate::load(Repository *repo)
     // do lookup in installed path when has no syntax resource
 #ifndef HAS_SYNTAX_RESOURCE
     for (const auto &dir : QStandardPaths::locateAll(QStandardPaths::GenericDataLocation,
-                                                     repo->KDE_DATA + QStringLiteral("/syntax-bundled"),
+                                                     LibPaths::KDE_DATA() + QStringLiteral("/syntax-bundled"),
                                                      QStandardPaths::LocateDirectory)) {
         if (!loadSyntaxFolderFromIndex(repo, dir)) {
             loadSyntaxFolder(repo, dir);
         }
     }
 #endif
-    QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)+"/"+repo->KDE_DATA + QStringLiteral("/syntax");
+    QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)+"/"+LibPaths::KDE_DATA() + QStringLiteral("/syntax");
     loadSyntaxFolder(repo, dir);
 #endif
 
     // default resources are always used, this is the one location that has a index cbor file
-    loadSyntaxFolderFromIndex(repo, QStringLiteral(":/") + repo->KDE_DATA +"/syntax");
+    loadSyntaxFolderFromIndex(repo, QStringLiteral(":/") + LibPaths::KDE_DATA() +"/syntax");
 
     // extra resources provided by 3rdparty libraries/applications
-    loadSyntaxFolder(repo, QStringLiteral(":/") + repo->KDE_DATA + "/syntax-addons");
+    loadSyntaxFolder(repo, QStringLiteral(":/") + LibPaths::KDE_DATA() + "/syntax-addons");
 
     // user given extra paths
     for (const auto &path : std::as_const(m_customSearchPaths)) {
@@ -254,17 +255,17 @@ void RepositoryPrivate::load(Repository *repo)
     // do lookup in standard paths, if not disabled
 #ifndef NO_STANDARD_PATHS
     for (const auto &dir : QStandardPaths::locateAll(QStandardPaths::GenericDataLocation,
-                                                     repo->KDE_DATA + QStringLiteral("/themes"),
+                                                     LibPaths::KDE_DATA() + QStringLiteral("/themes"),
                                                      QStandardPaths::LocateDirectory)) {
         loadThemeFolder(dir);
     }
 #endif
 
     // default resources are always used
-    loadThemeFolder(QStringLiteral(":/") + repo->KDE_DATA + "/themes");
+    loadThemeFolder(QStringLiteral(":/") + LibPaths::KDE_DATA() + "/themes");
 
     // extra resources provided by 3rdparty libraries/applications
-    loadThemeFolder(QStringLiteral(":/") + repo->KDE_DATA + "/themes-addons");
+    loadThemeFolder(QStringLiteral(":/") + LibPaths::KDE_DATA() + "/themes-addons");
 
     // user given extra paths
     for (const auto &path : std::as_const(m_customSearchPaths)) {

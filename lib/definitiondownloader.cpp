@@ -9,6 +9,7 @@
 #include "ksyntaxhighlighting_logging.h"
 #include "ksyntaxhighlighting_version.h"
 #include "repository.h"
+#include "libpaths.h"
 
 #include <QDir>
 #include <QFile>
@@ -159,7 +160,7 @@ DefinitionDownloader::DefinitionDownloader(Repository *repo, QObject *parent)
     d->needsReload = false;
 
     d->downloadLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/")
-            + repo->KDE_DATA + "/syntax";
+            + LibPaths::KDE_DATA() + "/syntax";
     QDir().mkpath(d->downloadLocation);
     Q_ASSERT(QFile::exists(d->downloadLocation));
 }
