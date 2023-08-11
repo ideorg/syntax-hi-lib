@@ -159,8 +159,8 @@ DefinitionDownloader::DefinitionDownloader(Repository *repo, QObject *parent)
     d->pendingDownloads = 0;
     d->needsReload = false;
 
-    d->downloadLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/")
-            + LibPaths::KDE_DATA() + "/syntax";
+    d->downloadLocation = LibPaths::syntax();
+
     QDir().mkpath(d->downloadLocation);
     Q_ASSERT(QFile::exists(d->downloadLocation));
 }

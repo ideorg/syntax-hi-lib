@@ -213,25 +213,14 @@ void RepositoryPrivate::load(Repository *repo)
 
     // do lookup in standard paths, if not disabled
 #ifndef NO_STANDARD_PATHS
-    // do lookup in installed path when has no syntax resource
-#ifndef HAS_SYNTAX_RESOURCE
-    for (const auto &dir : QStandardPaths::locateAll(QStandardPaths::GenericDataLocation,
-                                                     LibPaths::KDE_DATA() + QStringLiteral("/syntax-bundled"),
-                                                     QStandardPaths::LocateDirectory)) {
-        if (!loadSyntaxFolderFromIndex(repo, dir)) {
-            loadSyntaxFolder(repo, dir);
-        }
-    }
-#endif
-    QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)+"/"+LibPaths::KDE_DATA() + QStringLiteral("/syntax");
-    loadSyntaxFolder(repo, dir);
+    loadSyntaxFolder(repo, LibPaths::syntax());
 #endif
 
     // default resources are always used, this is the one location that has a index cbor file
-    loadSyntaxFolderFromIndex(repo, QStringLiteral(":/") + LibPaths::KDE_DATA() +"/syntax");
+    loadSyntaxFolderFromIndex(repo, LibPaths::syntax_res());
 
     // extra resources provided by 3rdparty libraries/applications
-    loadSyntaxFolder(repo, QStringLiteral(":/") + LibPaths::KDE_DATA() + "/syntax-addons");
+    loadSyntaxFolder(repo, LibPaths::syntax_res_add());
 
     // user given extra paths
     for (const auto &path : std::as_const(m_customSearchPaths)) {
@@ -254,18 +243,14 @@ void RepositoryPrivate::load(Repository *repo)
 
     // do lookup in standard paths, if not disabled
 #ifndef NO_STANDARD_PATHS
-    for (const auto &dir : QStandardPaths::locateAll(QStandardPaths::GenericDataLocation,
-                                                     LibPaths::KDE_DATA() + QStringLiteral("/themes"),
-                                                     QStandardPaths::LocateDirectory)) {
-        loadThemeFolder(dir);
-    }
+    loadThemeFolder(LibPaths::themes());
 #endif
 
     // default resources are always used
-    loadThemeFolder(QStringLiteral(":/") + LibPaths::KDE_DATA() + "/themes");
+    loadThemeFolder(LibPaths::themes_res());
 
     // extra resources provided by 3rdparty libraries/applications
-    loadThemeFolder(QStringLiteral(":/") + LibPaths::KDE_DATA() + "/themes-addons");
+    loadThemeFolder(LibPaths::themes_res_add());
 
     // user given extra paths
     for (const auto &path : std::as_const(m_customSearchPaths)) {
