@@ -125,6 +125,13 @@ void DownloaderUrls::finished(QNetworkReply *reply) {
         file.write(data);
         file.close();
     }
+    Index index(targetDir);
+    auto langInfo = index.readFromFile(url.fileName());
+    QFile fileDat(targetDir+"/versions.dat");
+    if (fileDat.open(QIODevice::Append)) {
+      langInfo.save(fileDat);
+      fileDat.close();
+    }
     currentDownloads--;
     if (downloadQueue.empty()) {
         if (!currentDownloads) {

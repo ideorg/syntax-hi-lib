@@ -1,6 +1,7 @@
 #ifndef DOWNLOADER_INDEX_H
 #define DOWNLOADER_INDEX_H
 
+#include <QFile>
 #include <QString>
 #include <QXmlStreamAttributes>
 
@@ -22,6 +23,7 @@ struct LanguageInfo {
     QString extensions;
 
     void fill(QXmlStreamAttributes &attributes);
+    void save(QFile &file);
 };
 
 using InfoList = QList<UpdateInfo>;

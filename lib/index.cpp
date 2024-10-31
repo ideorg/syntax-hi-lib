@@ -69,6 +69,13 @@ void LanguageInfo::fill(QXmlStreamAttributes &attributes) {
         }
 }
 
+void LanguageInfo::save(QFile &file) {
+    QString versionStr = QString::number(version);
+    QString row = fileName + "|" + langName + "|" + section  + "|" + versionStr + "|" + extensions + "\n";
+    std::string str = row.toUtf8().toStdString();
+    file.write(str.c_str(),str.length());
+}
+
 
 void UpdateInfo::fill(QXmlStreamAttributes &attributes) {
     foreach (const QXmlStreamAttribute &attr, attributes) {
