@@ -48,7 +48,7 @@ void AbstractDownloader::finished() {
 
 SyntaxDownloader::SyntaxDownloader() {
     ext = "*.xml";
-    singleFileUrl = "https://kate-editor.org/syntax/update-5.240.xml";
+    singleFileUrl = "https://kate-editor.org/syntax/update-5.256.xml";
     connect(&singleLoader, &DownloaderUrl::done, this, &SyntaxDownloader::finishedUpdate);
     connect(&multiLoader, &DownloaderUrls::done, this, &AbstractDownloader::finished);
 }
