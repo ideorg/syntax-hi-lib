@@ -1,9 +1,6 @@
 #ifndef DOWNLOADER_DOWNLOADER_H
 #define DOWNLOADER_DOWNLOADER_H
 
-#include <QByteArray>
-#include <QString>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QQueue>
 #include <QDir>
@@ -59,7 +56,8 @@ signals:
 class AbstractDownloader : public QObject {
 Q_OBJECT
 protected:
-    QString path;
+    QString singlePath;
+    QString multiPath;
     QString ext;
     QString singleFileUrl;
     DownloaderUrl singleLoader;
@@ -73,7 +71,7 @@ protected:
 public:
     bool busy() { return singleLoader.busy() || multiLoader.busy(); }
 
-    void setPath(QString path);
+    void setPath(QString singlePath, QString multiPath);
 
     bool mustDownload();
 

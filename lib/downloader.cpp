@@ -8,13 +8,14 @@
 
 using namespace KSyntaxHighlighting;
 
-void AbstractDownloader::setPath(QString path) {
-    this->path = path;
-    multiLoader.setTargetDir(path);
+void AbstractDownloader::setPath(QString singlePath, QString multiPath) {
+    this->singlePath = singlePath;
+    this->multiPath = multiPath;
+    multiLoader.setTargetDir(multiPath);
 }
 
 void AbstractDownloader::readDir() {
-    QStringList syntaxFiles = QDir(path).entryList(QStringList() << ext, QDir::Files);
+    QStringList syntaxFiles = QDir(multiPath).entryList(QStringList() << ext, QDir::Files);
     fileSet = QSet<QString>(syntaxFiles.constBegin(), syntaxFiles.constEnd());
 }
 
@@ -26,13 +27,13 @@ bool AbstractDownloader::startLoadSingle() {
 }
 
 bool AbstractDownloader::mustDownload() {
-    if (!QDir(path).exists()) return true;
+    if (!QDir(multiPath).exists()) return true;
     readDir();
     return fileSet.empty();
 }
 
 bool AbstractDownloader::start() {
-    auto dir = QDir(path);
+    auto dir = QDir(multiPath);
     if (!dir.exists())
         dir.mkpath(".");
     readDir();
@@ -152,7 +153,7 @@ std::pair<InfoList,InfoList> SyntaxDownloader::divideToTwoSets(InfoList &infoLis
 
 InfoList SyntaxDownloader::filterNewVersions(InfoList &infoList) {
     InfoList filtered;
-    Index index(path);
+    Index index(multiPath);
     foreach (const UpdateInfo& info, infoList) {
         auto langInfo = index.readFromFile(info.fileName);
         if (info.version>langInfo.version)
@@ -223,8 +224,8 @@ DoubleDownloader::DoubleDownloader() {
 
 void DoubleDownloader::setPath(QString path) {
     this->path = path;
-    themesDownloader.setPath(path+"/themes");
-    syntaxDownloader.setPath(path+"/syntax");
+    themesDownloader.setPath(path, path+"/themes");
+    syntaxDownloader.setPath(path, path+"/syntax");
 }
 
 bool DoubleDownloader::mustDownload() {
