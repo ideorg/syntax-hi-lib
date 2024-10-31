@@ -43,14 +43,24 @@ void AbstractDownloader::finished() {
 
 SyntaxDownloader::SyntaxDownloader() {
     ext = "*.xml";
-    singleFileUrl = "https://kate-editor.org/syntax/update-5.256.xml";
+    singleFileUrl = "https://kate-editor.org/syntax/" + updateName;
     connect(&singleLoader, &DownloaderUrl::done, this, &SyntaxDownloader::finishedUpdate);
     connect(&multiLoader, &DownloaderUrls::done, this, &AbstractDownloader::finished);
 }
 
 bool SyntaxDownloader::mustDownload() {
     if (!QDir(multiPath).exists()) return true;
-    return true;
+    if (!QFile(singlePath + "/" + updateName).exists()) return true;
+    if (!QFile(multiPath + "/" + "versions.dat").exists()) return true;
+    QFile file(singlePath + "/" + updateName);
+    if (!file.open(QFile::ReadOnly)) {
+      return true;
+    }
+    QByteArray data = file.readAll();
+    file.close();
+    auto infoList = Index::readUpdateData(data);
+    auto datList = Index::readDatFile(multiPath + "/" + "versions.dat");
+    return !Index::isUpdated(infoList, datList);
 }
 
 ThemesDownloader::ThemesDownloader() {
@@ -62,7 +72,18 @@ ThemesDownloader::ThemesDownloader() {
 
 bool ThemesDownloader::mustDownload() {
     if (!QDir(multiPath).exists()) return true;
-    return true;
+    QString qrcFname = singlePath + "/" + "theme-data.qrc";
+    if (!QFile(qrcFname).exists()) return true;
+    QFile file(qrcFname);
+    if (!file.open(QFile::ReadOnly)) {
+      return true;
+    }
+    QByteArray data = file.readAll();
+    file.close();
+    readDir();
+    auto fileList = readQrcData(data);
+    fileList = filter(fileList, fileSet);
+    return !fileList.empty();
 }
 
 bool DownloaderUrl::start(QString fileUrl) {
@@ -132,7 +153,7 @@ void DownloaderUrls::finished(QNetworkReply *reply) {
     int dotIndex = fname.lastIndexOf('.');
     QString ext;
     if (dotIndex != -1)
-        ext = fname.right(dotIndex);
+        ext = fname.right(fname.length() - dotIndex);
     else
         ext = "";
     if (ext == ".xml") {
@@ -142,6 +163,8 @@ void DownloaderUrls::finished(QNetworkReply *reply) {
       if (fileDat.open(QIODevice::Append)) {
         langInfo.save(fileDat);
         fileDat.close();
+      } else {
+        qDebug() << "can't open versions.dat";
       }
     }
     currentDownloads--;

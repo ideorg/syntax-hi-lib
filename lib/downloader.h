@@ -66,6 +66,7 @@ class SyntaxDownloader : public AbstractDownloader {
     std::pair<InfoList, InfoList> divideToTwoSets(InfoList &infoList);
     InfoList filterNewVersions(InfoList &infoList);
     QStringList getUrls(InfoList &infoList);
+    QString updateName= "update-5.256.xml";
 public:
     SyntaxDownloader();
     bool mustDownload() override;

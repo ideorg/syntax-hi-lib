@@ -11,7 +11,6 @@ struct UpdateInfo {
     QString langName;
     QString url;
     int version = 0;
-
     void fill(QXmlStreamAttributes &attributes);
 };
 
@@ -33,6 +32,8 @@ class Index {
 public:
     Index(QString syntaxDir);
     LanguageInfo readFromFile(QString fileName);
+    static bool isUpdated(const InfoList &updateList, const QList<LanguageInfo> &datList);
+    static QList<LanguageInfo> readDatFile(QString fileName);
     static InfoList readUpdateData(QByteArray &xmlData);
 };
 }
