@@ -82,7 +82,7 @@ void DownloaderUrl::finished(QNetworkReply *reply) {
     } else {
     }
     m_busy = false;
-    Q_EMIT done();
+    Q_EMIT done(reply->url());
 }
 
 bool DownloaderUrls::start(QStringList fileUrls) {
@@ -169,7 +169,12 @@ QStringList SyntaxDownloader::getUrls(InfoList &infoList) {
     return fileUrls;
 }
 
-void SyntaxDownloader::finishedUpdate() {
+void SyntaxDownloader::finishedUpdate(const QUrl& url) {
+    QFile file(singlePath+"/"+url.fileName());
+    if (file.open(QIODevice::WriteOnly)) {
+      file.write(singleLoader.result);
+      file.close();
+    }
     auto infoList = Index::readUpdateData(singleLoader.result);
     auto p = divideToTwoSets(infoList);
     auto newVersions = filterNewVersions(p.second);
@@ -186,7 +191,12 @@ QStringList ThemesDownloader::addPath(QStringList list, QString path) {
     return result;
 }
 
-void ThemesDownloader::finishedQrc() {
+void ThemesDownloader::finishedQrc(const QUrl& url) {
+    QFile file(singlePath+"/"+url.fileName());
+    if (file.open(QIODevice::WriteOnly)) {
+      file.write(singleLoader.result);
+      file.close();
+    }
     auto urlList = readQrcData(singleLoader.result);
     urlList = filter(urlList, fileSet);
     urlList = addPath(urlList, "https://invent.kde.org/frameworks/syntax-highlighting/-/raw/master/data/themes/");

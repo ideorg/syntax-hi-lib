@@ -18,7 +18,7 @@ public:
     bool start(QString fileUrl);
     bool busy() { return m_busy; }
 signals:
-    void done();
+    void done(const QUrl& url);
 };
 
 class DownloaderUrls : public QObject {
@@ -62,7 +62,7 @@ signals:
 };
 
 class SyntaxDownloader : public AbstractDownloader {
-    void finishedUpdate();
+    void finishedUpdate(const QUrl& url);
     std::pair<InfoList, InfoList> divideToTwoSets(InfoList &infoList);
     InfoList filterNewVersions(InfoList &infoList);
     QStringList getUrls(InfoList &infoList);
@@ -71,7 +71,7 @@ public:
 };
 
 class ThemesDownloader : public AbstractDownloader {
-    void finishedQrc();
+    void finishedQrc(const QUrl& url);
     QStringList readQrcData(QByteArray &xmlData);
     static QStringList addPath(QStringList list, QString path);
     static QStringList filter(QStringList fileList, QSet<QString> &set);
