@@ -32,9 +32,7 @@ class Index {
     QString syntaxDir;
 public:
     Index(QString syntaxDir);
-
     LanguageInfo readFromFile(QString fileName);
-
     static InfoList readUpdateData(QByteArray &xmlData);
 };
 }
