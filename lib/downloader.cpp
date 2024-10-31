@@ -26,12 +26,6 @@ bool AbstractDownloader::startLoadSingle() {
     return true;
 }
 
-bool AbstractDownloader::mustDownload() {
-    if (!QDir(multiPath).exists()) return true;
-    readDir();
-    return fileSet.empty();
-}
-
 bool AbstractDownloader::start() {
     auto dir = QDir(multiPath);
     if (!dir.exists())
@@ -54,12 +48,21 @@ SyntaxDownloader::SyntaxDownloader() {
     connect(&multiLoader, &DownloaderUrls::done, this, &AbstractDownloader::finished);
 }
 
+bool SyntaxDownloader::mustDownload() {
+    if (!QDir(multiPath).exists()) return true;
+    return true;
+}
 
 ThemesDownloader::ThemesDownloader() {
     ext = "*.theme";
     singleFileUrl = "https://invent.kde.org/frameworks/syntax-highlighting/-/raw/master/data/themes/theme-data.qrc";
     connect(&singleLoader, &DownloaderUrl::done, this, &ThemesDownloader::finishedQrc);
     connect(&multiLoader, &DownloaderUrls::done, this, &AbstractDownloader::finished);
+}
+
+bool ThemesDownloader::mustDownload() {
+    if (!QDir(multiPath).exists()) return true;
+    return true;
 }
 
 bool DownloaderUrl::start(QString fileUrl) {
@@ -120,17 +123,26 @@ void DownloaderUrls::addPortion() {
 void DownloaderUrls::finished(QNetworkReply *reply) {
     auto url = reply->url();
     QByteArray data = reply->readAll();
-    QFile file(targetDir+"/"+url.fileName());
+    QString fname = url.fileName();
+    QFile file(targetDir+"/" + fname);
     if (file.open(QIODevice::WriteOnly)) {
         file.write(data);
         file.close();
     }
-    Index index(targetDir);
-    auto langInfo = index.readFromFile(url.fileName());
-    QFile fileDat(targetDir+"/versions.dat");
-    if (fileDat.open(QIODevice::Append)) {
-      langInfo.save(fileDat);
-      fileDat.close();
+    int dotIndex = fname.lastIndexOf('.');
+    QString ext;
+    if (dotIndex != -1)
+        ext = fname.right(dotIndex);
+    else
+        ext = "";
+    if (ext == ".xml") {
+      Index index(targetDir);
+      auto langInfo = index.readFromFile(fname);
+      QFile fileDat(targetDir+"/versions.dat");
+      if (fileDat.open(QIODevice::Append)) {
+        langInfo.save(fileDat);
+        fileDat.close();
+      }
     }
     currentDownloads--;
     if (downloadQueue.empty()) {

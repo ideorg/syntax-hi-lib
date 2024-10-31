@@ -54,7 +54,7 @@ protected:
 public:
     bool busy() { return singleLoader.busy() || multiLoader.busy(); }
     void setPath(QString singlePath, QString multiPath);
-    bool mustDownload();
+    virtual bool mustDownload() = 0;
     bool start();
     void finished();
 signals:
@@ -68,6 +68,7 @@ class SyntaxDownloader : public AbstractDownloader {
     QStringList getUrls(InfoList &infoList);
 public:
     SyntaxDownloader();
+    bool mustDownload() override;
 };
 
 class ThemesDownloader : public AbstractDownloader {
@@ -77,6 +78,7 @@ class ThemesDownloader : public AbstractDownloader {
     static QStringList filter(QStringList fileList, QSet<QString> &set);
 public:
     ThemesDownloader();
+    bool mustDownload() override;
 };
 
 class DoubleDownloader : public QObject {
